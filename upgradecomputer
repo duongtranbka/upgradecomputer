@@ -1,77 +1,53 @@
-This time, Samsung Electronics, in a new building was built on the Umyeon Dong.
-
-Wireless division also was assigned to the spacious.
-
-The total space for Wireless division is fixed and the space for each group is fixed.
-
-Now we should assign partitions for each group.
+There exist n magnetic materials in a gravity-free space. The center of each magnetic material is the location, i.e., the spatial coordinate (x,y,z). Coordinates y and z of n magnetic materials are the same, and only the coordinates of x are different. In other words, it is assumed the magnetic materials exist in a straight line. The location of the magnetic materials is never changed by any external force. Now, when an object is located in a random position in the straight in which n magnetic materials exist, gravitational force acts from each magnetic material. The gravitational force acting from a magnetic material on the object is obtained by the distance (d) between the magnetic material and the object and by the masses of the magnetic material and the object.
 
  
 
-The time for assigning partition is proportional to size of space.
+Formula for calculating the gravitational force acting from a magnetic material on the object:
 
-For example, if the size of space is 1000, it spends time of 1000 to partition it
-
-(It spends same time if we partition it as 300+700 or 500+500.)
-
- 
-
-The total time depends on the order of partitioning.
-
-For example, in case the size of total space is 800, and each size for groups is 100, 200, and 500.
-
-If partitioning 100+700 first, partitioning 200+500 later, then the total time is 800+700=1500
-
-But, if partitioning 500+300 first, partitioning 100+200 later, then the total time is 800+300=1100
+F = G*m1*m2/(d*d), G is a positive constant.
+Between the magnetic materials on the left and those on the right, the object moves in the direction of magnetic materials with bigger force. It is when that the two gravitational forces become the same, the object stops moving. Find the point where both forces become the same. When there are n magnetic materials, n-1 points of balance exist
+Point of balance: where both forces become the same: Pulling force of left magnetic materials = Pulling force of right magnetic materials
 
  
 
-Write program to print the minimum time to partition for all groups.
+Note that errors of the coordinate values must be less than 10-9 (1e-9).
 
  
 
 [Input]
 
-There can be more than one test case in the input.
+ 
 
-The first line has T, the number of test cases.
+A total of 10 test cases are given. For each test case, the number of magnetic materials N is written. In the next line, N x coordinate values, and N mass values are input sequentially. The number (N) of magnetic materials comes between 2 and 10 (2 ≤ N ≤ 10).
 
-Then the totally T test cases are provided in the following lines.
-
-In each test case, the first line has an integer N(1 ≤ N ≤ 1000); the number of group.
-
-The next line enumerates N integers each separated by a blank; each integer means the size of space(S) for each group. (10≤S≤5000)
+ 
 
  
 
 [Output]
 
-For each test case, you should print your answer in two line.
+For each test case, print “#C” in the first line with C being case number. Leave a blank space and print out x coordinate values of the points of balance in the same line. If the coordinate value has 10 or more digits after the decimal point, print only up to10 digits.
 
  
 
-[Sample]
+[Input/output example]
 
-Input
+ 
 
-2
+2          <-- test case #1 starts, number of magnetic materials
 
-3
+1 2 1 1   <-- Each magnetic material’s x coordinate values, and mass values (coordinate coordinate mass mass).
 
-500 100 200
+2<-- test case #2 starts, number of magnetic materials
 
-4
+1 2 1 1000
 
-30 40 10 20
+. . .
 
  
 
 Output
 
-Case #1
+#1 1.5000000000
 
-1100
-
-Case #2
-
-190
+#2 1.0306534300
