@@ -1,150 +1,101 @@
-Suppose 'A' is a non empty zero indexed array of 'N' integers and 'K' is another Integer.
-Array 'A' needs to be divided into 'K' blocks of consecutive elements.  
 
-﻿
-Size of the block is any integer such that , 0 <= size of block <= N. Every element of the array should belong to some block. 
 
-The sum of the block from X to Y equals A[X] + A[X + 1] + ... + A[Y]. The sum of empty block equals 0.
 
-The big sum is defined as the maximal sum of any block.
-
-﻿ 
-
-For example, you are given integers 'K' = 3 and array A such that:
-  A[0] = 2
-  A[1] = 1
-  A[2] = 5
-  A[3] = 1
-  A[4] = 2
-  A[5] = 2
-  A[6] = 2 
-
-The array can be divided, for example, into the following blocks: 
-
-        [2, 1, 5, 1, 2, 2, 2], [], [] with a big sum of 15;
-        [2], [1, 5, 1, 2], [2, 2] with a big sum of 9;
-        [2, 1, 5], [], [1, 2, 2, 2] with a big sum of 8;
-        [2, 1], [5, 1], [2, 2, 2] with a big sum of 6.
-
-﻿ 
-
-The goal is to minimize the big sum. In the above example, 6 is the minimal big sum. 
-
-﻿ 
-
-Given integer K and a non-empty zero-indexed array A consisting of N integers, returns the minimal big sum. 
-
-﻿ 
-
-For example, given K = 3 and array A such that:
-  A[0] = 2
-  A[1] = 1
-  A[2] = 5
-  A[3] = 1
-  A[4] = 2
-  A[5] = 2
-  A[6] = 2 
-
-the function should return 6, as explained above.
-
-﻿ 
-
-Assume that: 
-
-        N and K are integers within the range [1..100,000];
-        each element of array A is an integer within the range [0..M].﻿ 
-
-Input :
-First Line : T : Number of test cases
-Second Line : K : Number of Blocks.
-Third Line : N : Number of elements in the input array
-Fourth Line : Elements of array separated by space.
-Fifth Line : next test case follows 
-
-﻿ 
-
-Output
-#Test_Case minimized_big_sum 
-
-﻿ 
-
-Sample Input
-2
-3
-7
-2 1 5 1 2 2 2
-4
-10
-10 2 1 5 1 2 2 2 9 11 
-
-﻿ 
-
-Sample Output  
-
-#1 6
-#2 12
-
-///
+////////////
+source
+////////////
 #include <iostream>
 using namespace std;
-int k, n,sum,result;
-int a[100];
-void dequi(int k, int check)
-{
-	int dem =1;
-	int sum=0;
-	int maxsum=0;
-	for(int i=0;i<n;i++)
-	{
-		if(sum+a[i]<=check)
-		{
-			sum=sum+a[i];
-		}else
-		{
-			dem++;
-			if(sum>maxsum)
-			{
-				maxsum=sum;
-			}
-			sum=0;
-			sum=sum+a[i];
-		}
-	}
-	if(sum>maxsum)
-	{
-		maxsum=sum;
-	}
-	if(dem<=k)
-	{
-		result= maxsum;
-	}else
-	{
-		dequi(k,check+1);
-	}
+
+#define MAXN 101
+#define MAXM 10000
+int T;
+int M;
+int Ans;
+int v; // ten thanh
+int W[MAXN];      // so luong may ban da
+int SL[MAXN];   // so luong lien ket
+int DS[MAXM][3]; // danh sach thanh tri
+bool check[MAXM][2];
+
+int P[MAXN];
+
+void Makeset( int x){
+	P[x] = x;
 }
-int main()
-{
-	freopen("input.txt","r",stdin);
-	int t;
-	cin>>t;
-	for(int tc=1;tc<=t;tc++)
-	{
-		cin>>k>>n;
-		for(int i=0;i<n;i++)
-		{
-			cin>>a[i];
-		}
-		int maxx = a[0];
-		for(int i=0;i<n;i++)
-		{
-			if(a[i]>maxx)
-			{
-				maxx=a[i];
+int Findset(int x){
+	if (P[x] != x)
+		P[x] = Findset(P[x]);
+	return P[x];
+}
+
+void Union(int x, int y){
+	int u = Findset(x);
+	int v = Findset(y);
+	P[u] = v;
+}
+
+int main(){
+	freopen("input.txt", "r", stdin);
+	cin >> T;
+	for (int tc = 1; tc <= T; tc++){
+		cin >> M;
+		int col = 0;
+		int tmp = v;
+		int vi;
+		Ans = 0;
+		//int W[MAXN];      // so luong may ban da
+		//int SL[MAXN];   // so luong lien ket
+		 // danh sach thanh tri
+		bool check[MAXM][2] ={0};
+		for (int i = 0; i < M; i++){
+			cin >> v;
+			Makeset(v);
+			cin>> W[v] >> SL [v];
+			tmp = v;
+			for (int j = 0; j < SL[v]; j++){
+				cin >> vi;
+				if (tmp < vi){
+					DS[col][0] = v;
+					DS[col++][1] = vi;
+				}
 			}
 		}
-		result=0;
-		dequi(k,maxx);
-		cout<<"#"<<tc<<" "<<result<<endl;
+		for (int i = 0; i< col;i++){
+			DS[i][2] = W[DS[i][0]] + W[DS[i][1]];
+		}
+		int min, tmp0, tmp1, tmp2;
+		for (int i = 0; i < col - 1; i++){
+			min = i;
+			for (int j = i+1; j < col; j++){
+				if (DS[j][2] > DS[min][2]) min = j;
+			}
+			if (min != i){
+				tmp0 = DS[min][0];
+				tmp1 = DS[min][1];
+				tmp2 = DS[min][2];
+				DS[min][0] = DS[i][0];
+				DS[min][1] = DS[i][1];
+				DS[min][2] = DS[i][2];
+				DS[i][0] = tmp0;
+				DS[i][1] =tmp1;
+				DS[i][2] = tmp2;
+			}
+		}
+
+		
+		for (int i = 0; i < col; i++){
+			if (Findset(DS[i][0]) != Findset(DS[i][1]) && !check[i][0] && !check[i][1]){
+				Union(DS[i][0], DS[i][1]);
+			}
+			else if (Findset(DS[i][0]) == Findset(DS[i][1])){
+				Ans += DS[i][2];
+				check[i][0] = true;
+				check[i][1] = true;
+			}
+		}
+		cout <<"Case #"<<tc<<endl;
+		cout<< Ans<<endl;
 	}
 	return 0;
 }
