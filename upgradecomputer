@@ -1,101 +1,116 @@
-
-
-
-////////////
-source
-////////////
 #include <iostream>
 using namespace std;
-
-#define MAXN 101
-#define MAXM 10000
-int T;
-int M;
-int Ans;
-int v; // ten thanh
-int W[MAXN];      // so luong may ban da
-int SL[MAXN];   // so luong lien ket
-int DS[MAXM][3]; // danh sach thanh tri
-bool check[MAXM][2];
-
-int P[MAXN];
-
-void Makeset( int x){
-	P[x] = x;
+char c[5][5];
+int a[5][5],aa,bb,result;
+int dx[4]={-1,0,1,0};
+int dy[4]={0,1,0,-1};
+bool visited[10][10];
+void changebw(int x, int y)
+{
+	if(a[x][y] == 0)
+	{
+		a[x][y] =1;
+	}else
+	{
+		a[x][y]=0;
+	}
+	for(int i=0;i<4;i++)
+	{
+		aa=x+dx[i];
+		bb=y+dy[i];
+		if(aa>=0 && aa<4 && bb >=0 && bb<4)
+		{
+			if(a[aa][bb] == 0)
+			{
+				a[aa][bb]=1;
+			}
+			else
+			{
+				a[aa][bb]=0;
+			}
+		}
+	}
 }
-int Findset(int x){
-	if (P[x] != x)
-		P[x] = Findset(P[x]);
-	return P[x];
+bool checkresult()
+{
+	int check =0;
+	for(int i=0;i<4;i++)
+	{
+		for(int j=0;j<4;j++)
+		{
+			if(a[i][j]!= a[0][0])
+			{
+				check++;
+				break;
+			}
+		}
+		if(check != 0)
+		{
+			break;
+		}
+	}
+	if(check == 0)
+	{
+		return true;
+	}else
+	{
+		return false;
+	}
 }
+void backtrack(int k, int dem)
+{
 
-void Union(int x, int y){
-	int u = Findset(x);
-	int v = Findset(y);
-	P[u] = v;
+	if(k== 16)
+	{
+			if(checkresult()==true)
+		{
+			if(dem<result)
+			{
+				result= dem;
+			}
+			return ;
+		}else
+		return ;
+	}
+			backtrack(k+1,dem);
+			changebw(k/4,k%4);
+			backtrack(k+1,dem+1);
+			changebw(k/4,k%4);
+	
 }
-
-int main(){
-	freopen("input.txt", "r", stdin);
-	cin >> T;
-	for (int tc = 1; tc <= T; tc++){
-		cin >> M;
-		int col = 0;
-		int tmp = v;
-		int vi;
-		Ans = 0;
-		//int W[MAXN];      // so luong may ban da
-		//int SL[MAXN];   // so luong lien ket
-		 // danh sach thanh tri
-		bool check[MAXM][2] ={0};
-		for (int i = 0; i < M; i++){
-			cin >> v;
-			Makeset(v);
-			cin>> W[v] >> SL [v];
-			tmp = v;
-			for (int j = 0; j < SL[v]; j++){
-				cin >> vi;
-				if (tmp < vi){
-					DS[col][0] = v;
-					DS[col++][1] = vi;
+int main()
+{
+	freopen("input.txt","r",stdin);
+	int t;
+	cin>>t;
+	for(int tc=1;tc<=t;tc++)
+	{
+		for(int i=0;i<4;i++)
+		{
+			for(int j=0;j<4;j++)
+			{
+				cin>>c[i][j];
+				if(c[i][j] == 'b')
+				{
+					a[i][j] = 0;
+				}else if(c[i][j] == 'w')
+				{
+					a[i][j] = 1;
 				}
+				//cout<<a[i][j]<< " ";
 			}
+			//cout<<"\n";
 		}
-		for (int i = 0; i< col;i++){
-			DS[i][2] = W[DS[i][0]] + W[DS[i][1]];
+		result=999999;
+		backtrack(0,0);
+		cout<<"Case #"<<tc<<endl;
+		if(result == 999999)
+		{
+			cout<<"impossible"<<endl;
+		}else
+		{
+			cout<<result<<endl;
 		}
-		int min, tmp0, tmp1, tmp2;
-		for (int i = 0; i < col - 1; i++){
-			min = i;
-			for (int j = i+1; j < col; j++){
-				if (DS[j][2] > DS[min][2]) min = j;
-			}
-			if (min != i){
-				tmp0 = DS[min][0];
-				tmp1 = DS[min][1];
-				tmp2 = DS[min][2];
-				DS[min][0] = DS[i][0];
-				DS[min][1] = DS[i][1];
-				DS[min][2] = DS[i][2];
-				DS[i][0] = tmp0;
-				DS[i][1] =tmp1;
-				DS[i][2] = tmp2;
-			}
-		}
-
-		
-		for (int i = 0; i < col; i++){
-			if (Findset(DS[i][0]) != Findset(DS[i][1]) && !check[i][0] && !check[i][1]){
-				Union(DS[i][0], DS[i][1]);
-			}
-			else if (Findset(DS[i][0]) == Findset(DS[i][1])){
-				Ans += DS[i][2];
-				check[i][0] = true;
-				check[i][1] = true;
-			}
-		}
-		cout <<"Case #"<<tc<<endl;
-		cout<< Ans<<endl;
 	}
 	return 0;
 }
