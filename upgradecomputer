@@ -1,82 +1,108 @@
-#include <iostream>
-using namespace std;
-char c[5][5];
-int a[5][5],aa,bb,result;
-int dx[4]={-1,0,1,0};
-int dy[4]={0,1,0,-1};
-bool visited[10][10];
-void changebw(int x, int y)
-{
-	if(a[x][y] == 0)
-	{
-		a[x][y] =1;
-	}else
-	{
-		a[x][y]=0;
-	}
-	for(int i=0;i<4;i++)
-	{
-		aa=x+dx[i];
-		bb=y+dy[i];
-		if(aa>=0 && aa<4 && bb >=0 && bb<4)
-		{
-			if(a[aa][bb] == 0)
-			{
-				a[aa][bb]=1;
-			}
-			else
-			{
-				a[aa][bb]=0;
-			}
-		}
-	}
-}
-bool checkresult()
-{
-	int check =0;
-	for(int i=0;i<4;i++)
-	{
-		for(int j=0;j<4;j++)
-		{
-			if(a[i][j]!= a[0][0])
-			{
-				check++;
-				break;
-			}
-		}
-		if(check != 0)
-		{
-			break;
-		}
-	}
-	if(check == 0)
-	{
-		return true;
-	}else
-	{
-		return false;
-	}
-}
-void backtrack(int k, int dem)
-{
+We consider a geographical map with N countries numbered from 1 to N (1 <= N <=  1000). For every country we know the numbers of other countries which are connected with its border. From every country we can reach to any other one, eventually crossing some borders. Write a program which determines whether it is possible to color the map only in two colors-red and blue in such a way that if two countries are connected their colors are different. The color of the first country is red. Your program must output one possible coloring for the other countries, or show, that such coloring is impossible.
 
-	if(k== 16)
+[Input]
+The first line is the total number of test cases T.
+
+A test case has two lines. In each test case, the first line has N (the number of countries) and E (the number of border) separated by a space. The next line enumerates E border. A border consists of the two countries it connects. For example, the border connecting countries 5 and 28 is represented by “5 28” or “28 5”. The indices of countries are 1 through N. All adjacent numbers in a line are each separated by a space.
+
+[Output]
+Output the each answer in 1 line. Each line starts with ‘#x’, where x means the index of a test case, and puts a space, and prints the answer.
+
+If the coloring is possible, this answer must contain a list of zeros and ones, without any separators between them. The i-th digit in this sequence is the color of the i-th country. 0 corresponds to red color, and one - to blue color. If a coloring is not possible, output the integer −1.
+
+ 
+
+[I/O Example]
+
+Input
+
+1                                ← Total test case T
+
+3 2                              ← Starting test case 1
+
+1 2 2 3
+
+ 
+
+Output
+
+#1 010
+
+ ///
+ #include <iostream>
+using namespace std;
+int n,m,M[10000][10000],mark[10000000],check;
+bool checkcolor(int x, int y)
+{
+	for(int i=0;i<n;i++)
 	{
-			if(checkresult()==true)
+		if(M[x][i] )
 		{
-			if(dem<result)
+			if(mark[i] == y)
 			{
-				result= dem;
+				return true;
 			}
-			return ;
-		}else
-		return ;
+		}
 	}
-			backtrack(k+1,dem);
-			changebw(k/4,k%4);
-			backtrack(k+1,dem+1);
-			changebw(k/4,k%4);
-	
+	return false;
+}
+void inkqua()
+{
+	for(int i=0;i<n;i++)
+	{
+		if(mark[i] == 2)
+		{
+			cout<<"0";
+		}else
+		{
+			cout<<"1";
+		}
+	}
+	cout<<"\n";
+}
+bool checkmang()
+{
+	for(int i=0;i<n;i++)
+	{
+		if(mark[i] == 0)
+			return false;
+	}
+	return true;
+}
+void backtrack(int k)
+{
+	if(k==n)
+	{
+		if(checkmang())
+		{
+			check++;
+			//inkqua();
+			return ;
+		}
+		return;
+	}
+	int kiemtra=0;
+	for(int c=2;c<=3;c++)
+	{
+		if(!checkcolor(k,c))
+		{
+			kiemtra++;
+			mark[k]=c;
+			backtrack(k+1);
+			if(checkmang())
+			{
+				//check++;
+				return;
+			}
+			//mark[k]=0;
+		}
+	}
+	if(kiemtra==0)
+	{
+		return;
+	}
+	//backtrack(k+1);
+
 }
 int main()
 {
@@ -85,32 +111,36 @@ int main()
 	cin>>t;
 	for(int tc=1;tc<=t;tc++)
 	{
-		for(int i=0;i<4;i++)
+		cin>>n>>m;
+		int x,y;
+		for(int i=0;i<(2*n);i++)
 		{
-			for(int j=0;j<4;j++)
-			{
-				cin>>c[i][j];
-				if(c[i][j] == 'b')
-				{
-					a[i][j] = 0;
-				}else if(c[i][j] == 'w')
-				{
-					a[i][j] = 1;
-				}
-				//cout<<a[i][j]<< " ";
-			}
-			//cout<<"\n";
+			cin>>x>>y;
+			M[x-1][y-1]=M[y-1][x-1]=1;
 		}
-		result=999999;
-		backtrack(0,0);
-		cout<<"Case #"<<tc<<endl;
-		if(result == 999999)
+/*		for(int i=0;i<n;i++)
 		{
-			cout<<"impossible"<<endl;
+			for(int j=0;j<n;j++)
+			{
+				cout<<M[i][j]<<" ";
+			}
+			cout<<"\n";
+		} */
+			check=0;
+		cout<<"#"<<tc<<" ";
+		backtrack(0);
+		if(check==0)
+		{
+		cout<<"-1"<<endl;;
 		}else
 		{
-			cout<<result<<endl;
+		inkqua();
 		}
+		for(int i=0;i<n;i++)
+		{
+		mark[i]=0;
+		}
+		
 	}
 	return 0;
 }
