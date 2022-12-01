@@ -1,156 +1,64 @@
 #include <iostream>
 using namespace std;
-#define MAXN  3000
-int n, m,map[MAXN][MAXN];
-int Qx[100000],Qy[100000],Qd[100000];
-int f=-1,r=-1;
-int dx[4]={-1,0,1,0};
-int dy[4]={0,1,0,-1};
-int timespecial;
-void Push(int x, int y, int d)
+int n,map[30][5],result,sobuoc;
+int dx[3]={-1,-1,-1};
+int dy[3]={-1,0,1};
+void backtrack(int x, int y, int sum, int steps, int dem)
 {
-	f++;
-	Qx[f]=x;
-	Qy[f]=y;
-	Qd[f]=d;
-}
-void Pop(int &x, int &y, int &d)
-{
-	r++;
-	x=Qx[r];
-	y=Qy[r];
-	d=Qd[r];
-}
-bool checkspecial(int x, int y)
-{
-	int dem=0;
-	for(int i=0;i<4;i++)
+	for(int i=0;i<3;i++)
 	{
 		int aa=x+dx[i];
 		int bb=y+dy[i];
-		if(map[aa][bb] == 3)
+		if(aa>=0 && aa<n && bb >=0 && bb <5)
 		{
-			dem++;
-		}
-	}
-	if(dem==4)
-	{
-		return true;
-	}else
-		return false;
-}
-bool checkfirst(int x, int y)
-{
-	for(int i=0;i<4;i++)
-	{
-		int aa=x+dx[i];
-		int bb=y+dy[i];
-		if(aa >=0 && bb >=0 &&  aa<n && bb <m)
-		{
-			if(aa == 0 || aa == n-1 || bb ==0 || bb == m-1)
+			if(map[aa][bb] == 0)
 			{
-				return false;
+				backtrack(aa,bb,sum,steps+1,dem);
 			}
-			if(map[aa][bb]==0)
+			if(map[aa][bb] == 1)
 			{
-				return false;
+				backtrack(aa,bb,sum+1,steps+1,dem);
+			}
+			if(map[aa][bb] == 2 && dem ==1)
+			{
+				backtrack(aa,bb,sum,steps+1,dem-1);
 			}
 		}
 	}
-	return true;
-}
-void BFS(int x, int y)
-{
-	f=-1;
-	r=-1;
-	Push(x,y,0);
-	while(f!=r)
+	if(sum>result && steps == n)
 	{
-		int a,b,d;
-		Pop(a,b,d);
-		d++;
-		for(int i=0;i<4;i++)
-		{
-			int aa=a+dx[i];
-			int bb=b+dy[i];
-			if(aa>=0 && aa <n && bb >=0 && bb <m && map[aa][bb] != 3 && map[aa][bb] != 0)
-			{
-				if(checkspecial(aa,bb) && map[aa][bb] == 2)
-				{
-					timespecial=d;
-					map[aa][bb]=3;
-				}
-				map[aa][bb]=3;
-				Push(aa,bb,d);
-			}
-		}
+		result=sum;
+	}
+	if(steps>sobuoc)
+	{
+		sobuoc=steps;
 	}
 }
 int main()
 {
-	//freopen("acid.txt","r",stdin);
+	freopen("input.txt","r",stdin);
 	int t;
 	cin>>t;
 	for(int tc=1;tc<=t;tc++)
 	{
-		timespecial=0;
-		cin>>n>>m;
-		int a,b;
-		cin>>a>>b;
-		a=a-1;
-		b=b-1;
-		int check1, check2;
+		cin>>n;
+		result=0;
+		sobuoc=0;
 		for(int i=0;i<n;i++)
 		{
-			for(int j=0;j<m;j++)
+			for(int j=0;j<5;j++)
 			{
 				cin>>map[i][j];
-				if(map[i][j] == 2)
-				{
-					check1=i;
-					check2=j;
-				}
 			}
 		}
-		cout<<"wrong"<<endl;
-		if(checkfirst(check1,check2))
+		backtrack(n,2,0,0,1);
+		cout<<"#"<<tc <<" ";
+		if(sobuoc == n)
 		{
-			cout<<"Case #"<<tc<<endl;
-			cout <<"-1"<<""<<"-1"<<endl;
+			cout<<result<<endl;
 		}else
 		{
-			int checkdiemdb=0;
-			int checkall=0;
-			map[a][b]=3;
-			BFS(a,b);
-			for(int i=0;i<n;i++)
-			{
-				for(int j=0;j<m;j++)
-				{
-					if(map[i][j] == 2)
-					{
-						checkdiemdb=1;
-					}
-					if(map[i][j]==1)
-					{
-						checkall=1;
-					}
-				}
-			}
-			cout<<"Case #"<<tc<<endl;
-			if(checkdiemdb==1)
-			{
-				cout<<"-1"<<" "<<"-1"<<endl;
-			}else
-			{
-				if(checkall ==1)
-				{
-					cout<<timespecial<<" "<<"-1"<<endl;
-				}else
-				{
-					cout<<timespecial<<" "<<Qd[f]+1<<endl;
-				}
-			}
+			cout<<"-1"<<endl;
 		}
 	}
 	return 0;
