@@ -1,65 +1,43 @@
-#include <iostream>
-using namespace std;
-int n,map[30][5],result,sobuoc;
-int dx[3]={-1,-1,-1};
-int dy[3]={-1,0,1};
-void backtrack(int x, int y, int sum, int steps, int dem)
-{
-	for(int i=0;i<3;i++)
-	{
-		int aa=x+dx[i];
-		int bb=y+dy[i];
-		if(aa>=0 && aa<n && bb >=0 && bb <5)
-		{
-			if(map[aa][bb] == 0)
-			{
-				backtrack(aa,bb,sum,steps+1,dem);
-			}
-			if(map[aa][bb] == 1)
-			{
-				backtrack(aa,bb,sum+1,steps+1,dem);
-			}
-			if(map[aa][bb] == 2 && dem ==1)
-			{
-				backtrack(aa,bb,sum,steps+1,dem-1);
-			}
-		}
-	}
-	if(sum>result && steps == n)
-	{
-		result=sum;
-	}
-	if(steps>sobuoc)
-	{
-		sobuoc=steps;
-	}
-}
-int main()
-{
-	freopen("input.txt","r",stdin);
-	int t;
-	cin>>t;
-	for(int tc=1;tc<=t;tc++)
-	{
-		cin>>n;
-		result=0;
-		sobuoc=0;
-		for(int i=0;i<n;i++)
-		{
-			for(int j=0;j<5;j++)
-			{
-				cin>>map[i][j];
-			}
-		}
-		backtrack(n,2,0,0,1);
-		cout<<"#"<<tc <<" ";
-		if(sobuoc == n)
-		{
-			cout<<result<<endl;
-		}else
-		{
-			cout<<"-1"<<endl;
-		}
-	}
-	return 0;
-}
+Cho một số tự nhiên N ≤ 9. Giữa các số từ 1 đến N hãy thêm vào các dấu + và - sao cho kết quả thu được bằng 0. Hãy viết chương trình tìm tất cả các khả năng có thể.
+
+[Input]
+
+Dòng đầu tiên là T số testcase. T dòng tiếp theo là các số tự nhiên N <= 9.
+
+ 
+
+[Output]
+
+Mỗi test case in ra “# ” theo sau là số lượng kết quả tìm được mỗi test case. 
+
+
+
+[Sample] 
+
+[Input]
+
+1
+
+7
+
+ 
+
+[Output]
+
+#1 6
+
+ 
+
+Giải thích
+
+1-2-3-4-5+6+7=0
+
+1-2+3+4-5+6-7=0
+
+1-23-45+67=0
+
+1-23+4+5+6+7=0
+
+1+2-3-4+5+6-7=0
+
+1+2-3+4-5-6+7=0
